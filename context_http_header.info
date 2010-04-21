@@ -1,0 +1,7 @@
+; $Id$
+name = Context HTTP Header
+description = "Provide context access to the HTTP header."
+package = Context
+core = "6.x"
+dependencies[] = context
+
