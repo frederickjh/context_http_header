@@ -6,13 +6,13 @@
  */
 
 /**
- * Implemantation of hook_context_http_header_def 
+ * Implemantation of hook_context_http_header_def();
  */
 function context_http_header_context_http_header_def() {
   return array(
     'extra_headers' => array(
       '#title'       => t('Extra HTTP Headers'),
-      '#description' => t("Enter one HTTP header per line\n with the form 'KEY:VALUE', no spaces!\n 
+      '#description' => t("Enter one HTTP header per line\n with the form 'KEY:VALUE', no spaces!\n
       To remove a header use 'KEY:'\n Headers are replaced in full. "),
       '#type'        => 'textarea',
     ),
@@ -20,41 +20,41 @@ function context_http_header_context_http_header_def() {
 }
 
 /**
- * Implementation of hook_context_http_header_build
- * should return array in the format of:  
- * array( 
+ * Implementation of hook_context_http_header_build().
+ *
+ * Should return array in the format of:
+ * array(
  *    'header-1' => array('value1', 'value2', etc),
  *    'header-2' => array(...),
  * )
  */
 function context_http_header_context_http_header_build($http_header_items) {
-  
+
   $keyed_headers = array();
-  
+
   if ($http_header_items['extra_headers']) {
     $extra_headers = explode("\n", $http_header_items['extra_headers']);
-    
+
     $values = array();
     foreach ($extra_headers as $extra_header) {
       list($header, $value) = explode(":", $extra_header);
       $keyed_headers[$header][] = trim($value);
     }
   }
-    
+
   return $keyed_headers;
 }
 
 /**
- * _context_http_header_header_map
- * Helper function to operate on the set of headers for each hook, 
+ * Helper function to operate on the set of headers for each hook,
  * concating several values into one string so they can be set all at once.
  * this is due to a limitation for drupal_set_header assuming replacement of given header.
  * @param $header_builds
  *   array containing all the headers for its hook.
- *   array( 
- *     'header' => array( 'value1', 'value2', 'value3', ... ) 
+ *   array(
+ *     'header' => array( 'value1', 'value2', 'value3', ... )
  *   )
- * @return 
+ * @return
  *   array of string headers
  *   array(
  *     'ANOTHER: TEST,BLABH BLAH, HAH,ecp=test,!stop,with-cache',
@@ -64,7 +64,7 @@ function context_http_header_context_http_header_build($http_header_items) {
 function _context_http_header_header_map($header_builds) {
 
   $headers = array();
-  
+
   foreach ($header_builds as $key => $value) {
     $value_string;
     if (is_array($value)) {
@@ -73,20 +73,21 @@ function _context_http_header_header_map($header_builds) {
     else {
       $value_string = $value;
     }
-    
+
     $headers[] = $key .": ". check_plain($value_string);
-  }    
-  
+  }
+
   return $headers;
 }
 
 /*****************************************
  * context 3 integration
  *****************************************/
- 
+
 /**
- * Make module compatible with context 3
- * implement hook_ctools_plugin_api().
+ * Implementation hook_ctools_plugin_api().
+ *
+ * Makes module compatible with context 3.
  */
 function context_http_header_ctools_plugin_api($module, $api) {
   if ($module == 'context' && $api == 'plugins') {
@@ -95,8 +96,9 @@ function context_http_header_ctools_plugin_api($module, $api) {
 }
 
 /**
- * Make module compatible with context 3
- * Implement hook_context_plugins().
+ * Implementation hook_context_plugins().
+ *
+ * Makes module compatible with context 3.
  */
 function context_http_header_context_plugins() {
   $plugins = array();
@@ -113,8 +115,9 @@ function context_http_header_context_plugins() {
 }
 
 /**
- * Make module compatible with context 3
- * Implement hook_context_registry().
+ * Implementation of hook_context_registry().
+ *
+ * Makes module compatible with context 3.
  */
 function context_http_header_context_registry() {
   $registry['reactions'] = array(
@@ -128,11 +131,12 @@ function context_http_header_context_registry() {
 }
 
 /**
- * Implementation of hook_context_page_reaction()
- * adds HTTP headers based on the active context
+ * Implementation of hook_context_page_reaction().
+ *
+ * Adds HTTP headers based on the active context.
  */
 function context_http_header_context_page_reaction() {
-  
+
   if (function_exists("context_context_reactions")) {
     _do_context2_reaction();
   }
@@ -150,12 +154,11 @@ function context_http_header_context_page_reaction() {
  *****************************************/
 
 /**
- * helper function to keep context 2 code in its own place.
- *
+ * Helper function to keep context 2 code in its own place.
  */
 function _do_context2_reaction() {
   $http_header_items = context_active_values('http_header');
-  
+
   $header_builds = module_invoke_all('context_http_header_build', $http_header_items);
 
   // parse the header builds for the header and the action
@@ -170,9 +173,10 @@ function _do_context2_reaction() {
 
 
 /**
- * Implementation of hook_context_reactions()
+ * Implementation of hook_context_reactions().
+ *
  * Adds a context reaction for setting HTTP Headers
- * hook_context_reactions() depracated in context3.
+ * hook_context_reactions() deprecated in context3.
  */
 function context_http_header_context_reactions() {
   $items['http_header'] = array(
