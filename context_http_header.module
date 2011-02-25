@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * @file content_set_header.module
  *    Adds HTTP Header reaction to Context

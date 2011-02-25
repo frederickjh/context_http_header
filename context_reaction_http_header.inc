@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * Expose http header changes as context reactions.
