@@ -1,4 +1,4 @@
-name = Context HTTP Header
+name = Context HTTP Headers
 description = "Provide context access to the HTTP header."
 package = Context
 core = "6.x"
